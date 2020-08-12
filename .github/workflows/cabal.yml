@@ -32,7 +32,7 @@ jobs:
 
     env:
       AGDA_SRC: './agda-src'
-      AGDA_DIST: './agda-prebuilt'
+      AGDA_DIST: './dist'
 
     steps:
     - name: Setup environment
@@ -57,7 +57,6 @@ jobs:
         _CABAL_STR=$(cabal --version)
         _CACHE_KEY=$(echo "$_GHC_STR-$_CABAL_STR" | sed "s/[^a-z0-9]/_/gi")
         echo "::set-env name=AGDA_CACHE_KEY::$_CACHE_KEY"
-        echo "::set-env name=AGDA_DATADIR_DEST::.agda-$AGDA_VERSION"
         echo "*** GHC version ***"     && ghc --version
         echo "*** cabal version ***"   && cabal --version
         echo "*** Agda version ***"    && echo $AGDA_VERSION
@@ -68,6 +67,13 @@ jobs:
         path: "~/.cabal"
         key: ${{ runner.os }}-cabal-${{ env.AGDA_CACHE_KEY }}-${{ hashFiles('**/plan.json') }}
 
+    - name: Cache dists
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ format('{0}/dist', env.AGDA_SRC) }}
+          ${{ format('{0}/dist-newstyle', env.AGDA_SRC) }}
+        key: ${{ runner.os }}-cabal-${{ env.AGDA_CACHE_KEY }}-${{ hashFiles('**/plan.json') }}
 
     - name: Edit the cabal file
       working-directory: ${{ env.AGDA_SRC }}
@@ -91,19 +97,21 @@ jobs:
 
     - name: Build Agda
       working-directory: ${{ env.AGDA_SRC }}
-      run: cabal build -j8
+      run: cabal build -j4
 
     - name: Produce Artifact
       working-directory: ${{ env.AGDA_SRC }}
       run: |
-        mkdir $GITHUB_WORKSPACE/$AGDA_DIST
-        cp -r $HOME/.cabal/share $GITHUB_WORKSPACE/$AGDA_DIST
+        DIST="$GITHUB_WORKSPACE/$AGDA_DIST"
+        mkdir $DIST
+        cp -r src/data/lib $DIST
         if [ -d "dist-newstyle" ]; then
-          cp dist-newstyle/build/x86_64-*/ghc-*/*/*/*/agda $GITHUB_WORKSPACE/$AGDA_DIST
+          cp dist-newstyle/build/x86_64-*/ghc-*/*/*/*/agda $DIST
         else
-          echo "::warning ::Copying agda binary in the old-style dist folder"
-          cp dist/build/agda/agda $GITHUB_WORKSPACE/$AGDA_DIST
+          echo "*** Copying agda binary in the old-style dist folder ***"
+          cp dist/build/agda/agda $DIST
         fi
+        strip $DIST/agda
 
     - name: Test Agda (dummy)
       working-directory: ${{ env.AGDA_DIST }}
