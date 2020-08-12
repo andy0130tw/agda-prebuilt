@@ -34,7 +34,7 @@ jobs:
     - name: Setup environment
       run: |
         sudo apt update
-        sudo apt install ghc cabal-install
+        sudo apt install ghc cabal-install alex happy
 
     - name: Update cabal
       run: cabal update
@@ -88,6 +88,7 @@ jobs:
     - name: Test Agda (dummy)
       run: |
         # TODO: test if the file is indeed static
+        true
 
     - name: Produce Artifact
       run: |
