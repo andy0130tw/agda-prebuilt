@@ -82,8 +82,7 @@ jobs:
 
     - name: Install dependencies
       working-directory: ${{ env.AGDA_SRC }}
-      run: |
-        cabal install --only-dependencies
+      run: cabal install --only-dependencies
 
     - name: Configure Agda
       working-directory: ${{ env.AGDA_SRC }}
@@ -94,6 +93,11 @@ jobs:
         --enable-library-stripping \
         --enable-executable-stripping \
         --ghc-option=-fPIC
+
+    - name: Install dependencies again
+      working-directory: ${{ env.AGDA_SRC }}
+      run: cabal install --only-dependencies
+
 
     - name: Build Agda
       working-directory: ${{ env.AGDA_SRC }}
