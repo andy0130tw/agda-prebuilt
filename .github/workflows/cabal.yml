@@ -33,8 +33,8 @@ jobs:
     steps:
     - name: Setup environment
       run: |
-      sudo apt install cabal-install
-      cabal update
+        sudo apt install cabal-install
+        cabal update
 
     - name: Checkout Agda repo
       uses: actions/checkout@v2.3.1
@@ -44,19 +44,20 @@ jobs:
 
     - name: Summary of environment
       run: |
-      echo "*** GHC version ***"     && ghc     --version
-      echo "*** cabal version ***"   && cabal   --version
+        echo "*** GHC version ***"     && ghc     --version
+        echo "*** cabal version ***"   && cabal   --version
 
     - name: Configure (static) agda
       run: |
         cd agda-src
         sed -i '/^executable agda$/a\  ld-options: -static' Agda.cabal
-        cabal configure --datadir=~/.agda-${{ matrix.agda-ver }}
+        cabal configure --datadir=~/.agda-${{ matrix.agda-ver }} --disable-executable-dynamic --disable-shared --ghc-option=-optl=-fPIC
         cabal build --only-dependencies
 
     - name: Build Agda
       run: |
         cabal build
+        # TODO: test if the file is indeed static
 
     - name: Produce Artifact
       run: |
