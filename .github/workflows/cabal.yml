@@ -52,8 +52,8 @@ jobs:
         export AGDA_VERSION=$(cabal info . | head -n 1 | cut -d " " -f 2 | cut -d "-" -f 2)
         export GHC_VERSION_STR=$(ghc --version)
         export CABAL_VERSION_STR=$(cabal --version)
-        echo '::set-env name=GHC_VERSION_STR::$GHC_VERSION_STR'
-        echo '::set-env name=CABAL_VERSION_STR::$CABAL_VERSION_STR'
+        echo ::set-env name=GHC_VERSION_STR::$GHC_VERSION_STR
+        echo ::set-env name=CABAL_VERSION_STR::$CABAL_VERSION_STR
         echo "*** GHC version ***"     && ghc --version
         echo "*** cabal version ***"   && cabal --version
         echo "*** Agda version ***"    && echo $AGDA_VERSION
