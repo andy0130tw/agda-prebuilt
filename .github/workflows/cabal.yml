@@ -50,10 +50,10 @@ jobs:
       working-directory: './agda-src'
       run: |
         export AGDA_VERSION=$(cabal info . | head -n 1 | cut -d " " -f 2 | cut -d "-" -f 2)
-        export GHC_VERSION_STR=$(ghc --version)
-        export CABAL_VERSION_STR=$(cabal --version)
-        echo ::set-env name=GHC_VERSION_STR::$GHC_VERSION_STR
-        echo ::set-env name=CABAL_VERSION_STR::$CABAL_VERSION_STR
+        _GHC_STR=$(ghc --version)
+        _CABAL_STR=$(cabal --version)
+        _CACHE_KEY=$(echo "$_GHC_STR-$_CABAL_STR" | sed "s/[^a-z0-9]/_/gi")
+        echo ::set-env name=AGDA_CACHE_KEY::$_CACHE_KEY
         echo "*** GHC version ***"     && ghc --version
         echo "*** cabal version ***"   && cabal --version
         echo "*** Agda version ***"    && echo $AGDA_VERSION
@@ -62,7 +62,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: "~/.cabal"
-        key: ${{ runner.os }}-cabal-${{ env.GHC_VERSION_STR }}-${{ env.CABAL_VERSION_STR }}-${{ hashFiles('**/plan.json') }}
+        key: ${{ runner.os }}-cabal-${{ env.AGDA_CACHE_KEY }}-${{ hashFiles('**/plan.json') }}
 
 
     - name: Edit the cabal file
