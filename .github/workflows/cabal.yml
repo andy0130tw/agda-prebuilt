@@ -38,7 +38,7 @@ jobs:
     - name: Setup environment
       run: |
         sudo apt update
-        sudo apt install ghc cabal-install alex happy
+        sudo apt install ghc cabal-install alex happy libicu-dev
 
     - name: Update cabal
       run: cabal update
@@ -48,6 +48,11 @@ jobs:
         repository: agda/agda
         ref: ${{ matrix.agda-ver }}
         path: ${{ env.AGDA_SRC }}
+
+    # - name: Edit the cabal file
+    #   working-directory: ${{ env.AGDA_SRC }}
+    #   run: |
+    #     sed -i '/^executable agda$/a\  ld-options: -static' Agda.cabal
 
     - name: Summarize the environment
       working-directory: ${{ env.AGDA_SRC }}
@@ -75,33 +80,31 @@ jobs:
           ${{ format('{0}/dist-newstyle', env.AGDA_SRC) }}
         key: ${{ runner.os }}-cabal-${{ env.AGDA_CACHE_KEY }}-${{ hashFiles(format('{0}/Agda.cabal', env.AGDA_SRC)) }}
 
-    - name: Edit the cabal file
-      working-directory: ${{ env.AGDA_SRC }}
-      run: |
-        sed -i '/^executable agda$/a\  ld-options: -static' Agda.cabal
-
     - name: Install dependencies
       working-directory: ${{ env.AGDA_SRC }}
-      run: cabal install --only-dependencies
+      run: |
+        cabal install --only-dependencies \
+        -fenable-cluster-counting
 
     - name: Configure Agda
       working-directory: ${{ env.AGDA_SRC }}
       run: |
         cabal configure --prefix=/usr/local \
+        -fenable-cluster-counting \
+        --enable-tests \
+        --disable-library-profiling \
         --disable-executable-dynamic \
         --disable-shared \
         --enable-library-stripping \
         --enable-executable-stripping \
-        --ghc-option=-fPIC
-
-    - name: Install dependencies again
-      working-directory: ${{ env.AGDA_SRC }}
-      run: cabal install --only-dependencies
-
+        --ghc-options="-fPIC +RTS -M5G -RTS"
+        --ld-options=-static
 
     - name: Build Agda
       working-directory: ${{ env.AGDA_SRC }}
-      run: cabal build -j4
+      run: |
+        cabal build -j4 -fenable-cluster-counting \
+        --ghc-options="+RTS -M5G -RTS"
 
     - name: Produce Artifact
       working-directory: ${{ env.AGDA_SRC }}
