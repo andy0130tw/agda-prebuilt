@@ -33,6 +33,7 @@ jobs:
     steps:
     - name: Setup environment
       run: |
+        sudo apt update
         sudo apt install ghc cabal-install
 
     - name: Update cabal
@@ -49,20 +50,33 @@ jobs:
       working-directory: './agda-src'
       run: |
         export AGDA_VERSION=$(cabal info . | head -n 1 | cut -d " " -f 2 | cut -d "-" -f 2)
-        echo "*** GHC version ***"     && ghc     --version
-        echo "*** cabal version ***"   && cabal   --version
+        export GHC_VERSION_STR=$(ghc --version)
+        export CABAL_VERSION_STR=$(cabal --version)
+        echo "*** GHC version ***"     && ghc --version
+        echo "*** cabal version ***"   && cabal --version
         echo "*** Agda version ***"    && echo $AGDA_VERSION
 
-    - name: Configure (static) agda
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: "~/.cabal"
+        key: ${{ runner.os }}-cabal-$GHC_VERSION_STR-$CABAL_VERSION_STR-${{ hashFiles('**/plan.json') }}
+
+
+    - name: Edit the cabal file
       working-directory: './agda-src'
       run: |
         sed -i '/^executable agda$/a\  ld-options: -static' Agda.cabal
-        cabal configure --datadir=~/.agda-$AGDA_VERSION --disable-executable-dynamic --disable-shared --ghc-option=-optl=-fPIC
 
-    - name: Install and build dependencies
+    - name: Install dependencies
+      working-directory: './agda-src'
       run: |
         cabal install --only-dependencies
-        cabal build --only-dependencies
+
+    - name: Configure Agda
+      working-directory: './agda-src'
+      run: |
+        cabal configure --datadir=~/.agda-$AGDA_VERSION --disable-executable-dynamic --disable-shared --ghc-option=-optl=-fPIC
 
     - name: Build Agda
       working-directory: './agda-src'
