@@ -60,7 +60,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: "~/.cabal"
-        key: ${{ runner.os }}-cabal-$GHC_VERSION_STR-$CABAL_VERSION_STR-${{ hashFiles('**/plan.json') }}
+        key: ${{ runner.os }}-cabal-${{ env.GHC_VERSION_STR }}-${{ env.CABAL_VERSION_STR }}-${{ hashFiles('**/plan.json') }}
 
 
     - name: Edit the cabal file
