@@ -57,6 +57,8 @@ jobs:
         echo "*** GHC version ***"     && ghc --version
         echo "*** cabal version ***"   && cabal --version
         echo "*** Agda version ***"    && echo $AGDA_VERSION
+        export AGDA_DATADIR_DEST=~/.agda-$AGDA_VERSION
+        echo ::set-env name=AGDA_DATADIR_DEST::$AGDA_DATADIR_DEST
 
     - name: Cache dependencies
       uses: actions/cache@v2
@@ -78,26 +80,28 @@ jobs:
     - name: Configure Agda
       working-directory: './agda-src'
       run: |
-        cabal configure --datadir=~/.agda-$AGDA_VERSION --disable-executable-dynamic --disable-shared --ghc-option=-optl=-fPIC
+        cabal configure --datadir=$AGDA_DATADIR_DEST --disable-executable-dynamic --disable-shared --ghc-option=-fPIC
 
     - name: Build Agda
       working-directory: './agda-src'
       run: |
         cabal build
 
-    - name: Test Agda (dummy)
-      run: |
-        # TODO: test if the file is indeed static
-        true
-
     - name: Produce Artifact
+      working-directory: './agda-src'
       run: |
         mkdir $GITHUB_WORKSPACE/agda-prebuilt
-        pushd $HOME/.cabal/share/x86_64-*
+        pushd $AGDA_DATADIR_DEST
         cp Agda* $GITHUB_WORKSPACE/agda-prebuilt
         popd
-        cp agda-src/dist-newstyle/build/x86_64-*/ghc-*/*/*/*/agda $GITHUB_WORKSPACE/agda-prebuilt
+        cp dist-newstyle/build/x86_64-*/ghc-*/*/*/*/agda $GITHUB_WORKSPACE/agda-prebuilt
         tar
+
+    - name: Test Agda (dummy)
+      working-directory: './agda-prebuilt'
+      run: |
+        # TODO: test if the file is indeed static
+        file ./agda
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
