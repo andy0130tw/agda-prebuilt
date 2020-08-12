@@ -65,7 +65,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: "~/.cabal"
-        key: ${{ runner.os }}-cabal-${{ env.AGDA_CACHE_KEY }}-${{ hashFiles('Agda.cabal') }}
+        key: ${{ runner.os }}-cabal-${{ env.AGDA_CACHE_KEY }}-${{ hashFiles(format('{0}/Agda.cabal', env.AGDA_SRC)) }}
 
     - name: Cache dists
       uses: actions/cache@v2
@@ -73,7 +73,7 @@ jobs:
         path: |
           ${{ format('{0}/dist', env.AGDA_SRC) }}
           ${{ format('{0}/dist-newstyle', env.AGDA_SRC) }}
-        key: ${{ runner.os }}-cabal-${{ env.AGDA_CACHE_KEY }}-${{ hashFiles('Agda.cabal') }}
+        key: ${{ runner.os }}-cabal-${{ env.AGDA_CACHE_KEY }}-${{ hashFiles(format('{0}/Agda.cabal', env.AGDA_SRC)) }}
 
     - name: Edit the cabal file
       working-directory: ${{ env.AGDA_SRC }}
