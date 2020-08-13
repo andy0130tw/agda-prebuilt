@@ -84,7 +84,7 @@ jobs:
     - name: Install dependencies
       working-directory: ${{ env.AGDA_SRC }}
       run: |
-        cabal install --only-dependencies
+        cabal build --only-dependencies
 
     - name: Configure Agda
       working-directory: ${{ env.AGDA_SRC }}
