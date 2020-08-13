@@ -2,7 +2,7 @@
 
 ![Linux (cabal)](https://github.com/andy0130tw/agda-prebuilt/workflows/Linux%20(cabal)/badge.svg)
 
-Prebuilt, static Agda binary for Linux.
+Prebuilt, static-linked Agda binary for Linux.
 
 ## Usage
 

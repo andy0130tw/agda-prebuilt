@@ -87,7 +87,7 @@ jobs:
     - name: Configure Agda
       working-directory: ${{ env.AGDA_SRC }}
       run: |
-        cabal configure --prefix=/usr/local
+        cabal configure --prefix=/usr/local \
         --enable-tests \
         --disable-library-profiling \
         --disable-executable-dynamic \
