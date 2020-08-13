@@ -81,11 +81,6 @@ jobs:
           ${{ format('{0}/dist*', env.AGDA_SRC) }}
         key: ${{ runner.os }}-cabal-${{ matrix.ghc-ver }}-${{ matrix.cabal-ver }}-${{ hashFiles(format('{0}/Agda.cabal', env.AGDA_SRC)) }}-r1
 
-    - name: Install dependencies
-      working-directory: ${{ env.AGDA_SRC }}
-      run: |
-        cabal build --only-dependencies
-
     - name: Configure Agda
       working-directory: ${{ env.AGDA_SRC }}
       run: |
@@ -97,6 +92,11 @@ jobs:
         --enable-library-stripping \
         --enable-executable-stripping \
         --ghc-options="-fPIC +RTS -M5G -RTS"
+
+    - name: Install dependencies
+      working-directory: ${{ env.AGDA_SRC }}
+      run: |
+        cabal build --only-dependencies
 
     - name: Build Agda
       working-directory: ${{ env.AGDA_SRC }}
