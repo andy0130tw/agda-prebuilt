@@ -49,10 +49,10 @@ jobs:
         ref: ${{ matrix.agda-ver }}
         path: ${{ env.AGDA_SRC }}
 
-    # - name: Edit the cabal file
-    #   working-directory: ${{ env.AGDA_SRC }}
-    #   run: |
-    #     sed -i '/^executable agda$/a\  ld-options: -static' Agda.cabal
+    - name: Edit the cabal file
+      working-directory: ${{ env.AGDA_SRC }}
+      run: |
+        sed -i '/^executable agda$/a\  ld-options: -static' Agda.cabal
 
     - name: Summarize the environment
       working-directory: ${{ env.AGDA_SRC }}
@@ -96,8 +96,7 @@ jobs:
         --disable-shared \
         --enable-library-stripping \
         --enable-executable-stripping \
-        --ghc-options="-fPIC +RTS -M5G -RTS" \
-        --ld-options=-static
+        --ghc-options="-fPIC +RTS -M5G -RTS"
 
     - name: Build Agda
       working-directory: ${{ env.AGDA_SRC }}
