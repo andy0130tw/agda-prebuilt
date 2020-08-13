@@ -70,15 +70,14 @@ jobs:
       uses: actions/cache@v2
       with:
         path: "~/.cabal"
-        key: ${{ runner.os }}-cabal-${{ env.AGDA_CACHE_KEY }}-${{ hashFiles(format('{0}/Agda.cabal', env.AGDA_SRC)) }}
+        key: ${{ runner.os }}-cabal-${{ env.AGDA_CACHE_KEY }}-${{ hashFiles(format('{0}/Agda.cabal', env.AGDA_SRC)) }}-r1
 
     - name: Cache dists
       uses: actions/cache@v2
       with:
         path: |
-          ${{ format('{0}/dist', env.AGDA_SRC) }}
-          ${{ format('{0}/dist-newstyle', env.AGDA_SRC) }}
-        key: ${{ runner.os }}-cabal-${{ env.AGDA_CACHE_KEY }}-${{ hashFiles(format('{0}/Agda.cabal', env.AGDA_SRC)) }}
+          ${{ format('{0}/dist*', env.AGDA_SRC) }}
+        key: ${{ runner.os }}-cabal-${{ env.AGDA_CACHE_KEY }}-${{ hashFiles(format('{0}/Agda.cabal', env.AGDA_SRC)) }}-r1
 
     - name: Install dependencies
       working-directory: ${{ env.AGDA_SRC }}
@@ -104,6 +103,7 @@ jobs:
       working-directory: ${{ env.AGDA_SRC }}
       run: |
         cabal build -j4 -fenable-cluster-counting \
+        --ld-options=-static \
         --ghc-options="+RTS -M5G -RTS"
 
     - name: Produce Artifact
@@ -130,7 +130,3 @@ jobs:
       with:
         name: agda-prebuilt
         path: ${{ env.AGDA_DIST }}
-
-    - name: Clean up
-      working-directory: ${{ env.AGDA_SRC }}
-      run: cabal clean
