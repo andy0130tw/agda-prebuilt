@@ -130,3 +130,9 @@ jobs:
       with:
         name: agda-prebuilt
         path: ${{ env.AGDA_DIST }}
+
+    - name: "For inspecting .cabal"
+      uses: actions/upload-artifact@v2
+      with:
+        name: cabal-dir
+        path: "~/.cabal"
