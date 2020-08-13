@@ -18,6 +18,8 @@ jobs:
       && !contains(github.event.head_commit.message, '[github skip]')
       && !contains(github.event.head_commit.message, '[skip github]')
 
+    runs-on: ${{ matrix.os }}
+
     strategy:
       matrix:
         os:
@@ -25,14 +27,9 @@ jobs:
         - ubuntu-18.04
         # - ubuntu-20.04
         agda-ver:
+        - 'v2.6.0.1'
         - 'v2.6.1'
         # - master
-        cabal-ver:
-        - '3.2'
-        ghc-ver:
-        - '8.10.1'
-
-    runs-on: ${{ matrix.os }}
 
     env:
       AGDA_SRC: './agda-src'
@@ -42,12 +39,10 @@ jobs:
     - name: Setup environment
       run: |
         sudo apt update
-        sudo apt install alex happy libicu-dev
+        sudo apt install ghc cabal-install alex happy libicu-dev
 
-    - uses: actions/setup-haskell@v1.1.1
-      with:
-        ghc-version: ${{ matrix.ghc-ver }}
-        cabal-version: ${{ matrix.cabal-ver }}
+    - name: Update cabal
+      run: cabal update
 
     - uses: actions/checkout@v2.3.2
       with:
@@ -59,16 +54,37 @@ jobs:
       working-directory: ${{ env.AGDA_SRC }}
       run: |
         sed -i '/^executable agda$/a\  ld-options: -static' Agda.cabal
-        # see https://github.com/agda/agda/issues/4216
-        touch doc/user-manual.pdf
 
     - name: Summarize the environment
       working-directory: ${{ env.AGDA_SRC }}
       run: |
         export AGDA_VERSION=$(cabal info . | head -n 1 | cut -d " " -f 2 | cut -d "-" -f 2)
+        _GHC_STR=$(ghc --version)
+        _CABAL_STR=$(cabal --version)
+        _CACHE_KEY=$(echo "$_GHC_STR-$_CABAL_STR" | sed "s/[^a-z0-9]/_/gi")
+        echo "::set-env name=AGDA_CACHE_KEY::$_CACHE_KEY"
         echo "*** GHC version ***"     && ghc --version
         echo "*** cabal version ***"   && cabal --version
         echo "*** Agda version ***"    && echo $AGDA_VERSION
+
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path:
+        - "~/.cabal"
+        - "~/.ghc"
+        key: ${{ runner.os }}-cabal-${{ env.AGDA_CACHE_KEY }}-${{ hashFiles(format('{0}/Agda.cabal', env.AGDA_SRC)) }}-r1
+
+    - name: Cache dists
+      uses: actions/cache@v2
+      with:
+        path: ${{ format('{0}/dist*', env.AGDA_SRC) }}
+        key: ${{ runner.os }}-cabal-${{ env.AGDA_CACHE_KEY }}-${{ hashFiles(format('{0}/Agda.cabal', env.AGDA_SRC)) }}-r1
+
+    - name: Install dependencies
+      working-directory: ${{ env.AGDA_SRC }}
+      run: |
+        cabal install --only-dependencies
 
     - name: Configure Agda
       working-directory: ${{ env.AGDA_SRC }}
@@ -82,28 +98,10 @@ jobs:
         --enable-executable-stripping \
         --ghc-options="-fPIC +RTS -M5G -RTS"
 
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: "~/.cabal"
-        key: ${{ runner.os }}-cabal-${{ matrix.ghc-ver }}-${{ matrix.cabal-ver }}-${{ hashFiles('**/plan.json') }}-r1
-
-    - name: Cache dists
-      uses: actions/cache@v2
-      with:
-        path: |
-          ${{ format('{0}/dist*', env.AGDA_SRC) }}
-        key: ${{ runner.os }}-cabal-${{ matrix.ghc-ver }}-${{ matrix.cabal-ver }}-${{ hashFiles('**/plan.json') }}-r1
-
-    - name: Install dependencies
-      working-directory: ${{ env.AGDA_SRC }}
-      run: |
-        cabal build --only-dependencies -j4
-
     - name: Build Agda
       working-directory: ${{ env.AGDA_SRC }}
       run: |
-        cabal build --prefix=/usr/local -j4
+        cabal build -j4
 
     - name: Produce Artifact
       working-directory: ${{ env.AGDA_SRC }}
