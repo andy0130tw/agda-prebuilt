@@ -70,19 +70,6 @@ jobs:
         echo "*** cabal version ***"   && cabal --version
         echo "*** Agda version ***"    && echo $AGDA_VERSION
 
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: "~/.cabal"
-        key: ${{ runner.os }}-cabal-${{ matrix.cabal-ver }}-${{ matrix.cabal-ver }}-${{ hashFiles('**/plan.json') }}-r1
-
-    - name: Cache dists
-      uses: actions/cache@v2
-      with:
-        path: |
-          ${{ format('{0}/dist*', env.AGDA_SRC) }}
-        key: ${{ runner.os }}-cabal-${{ matrix.ghc-ver }}-${{ matrix.cabal-ver }}-${{ hashFiles('**/plan.json') }}-r1
-
     - name: Configure Agda
       working-directory: ${{ env.AGDA_SRC }}
       run: |
@@ -94,6 +81,19 @@ jobs:
         --enable-library-stripping \
         --enable-executable-stripping \
         --ghc-options="-fPIC +RTS -M5G -RTS"
+
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: "~/.cabal"
+        key: ${{ runner.os }}-cabal-${{ matrix.ghc-ver }}-${{ matrix.cabal-ver }}-${{ hashFiles('**/plan.json') }}-r1
+
+    - name: Cache dists
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ format('{0}/dist*', env.AGDA_SRC) }}
+        key: ${{ runner.os }}-cabal-${{ matrix.ghc-ver }}-${{ matrix.cabal-ver }}-${{ hashFiles('**/plan.json') }}-r1
 
     - name: Install dependencies
       working-directory: ${{ env.AGDA_SRC }}
