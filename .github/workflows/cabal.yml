@@ -70,9 +70,9 @@ jobs:
     - name: Cache dependencies
       uses: actions/cache@v2
       with:
-        path:
-        - "~/.cabal"
-        - "~/.ghc"
+        path: |
+          ~/.cabal
+          ~/.ghc
         key: ${{ runner.os }}-cabal-${{ env.AGDA_CACHE_KEY }}-${{ hashFiles(format('{0}/Agda.cabal', env.AGDA_SRC)) }}-r1
 
     - name: Cache dists
