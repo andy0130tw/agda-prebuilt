@@ -96,7 +96,7 @@ jobs:
         --disable-shared \
         --enable-library-stripping \
         --enable-executable-stripping \
-        --ghc-options="-fPIC +RTS -M5G -RTS"
+        --ghc-options="-fPIC +RTS -M5G -RTS" \
         --ld-options=-static
 
     - name: Build Agda
