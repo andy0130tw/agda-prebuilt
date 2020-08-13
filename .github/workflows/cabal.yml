@@ -102,9 +102,7 @@ jobs:
     - name: Build Agda
       working-directory: ${{ env.AGDA_SRC }}
       run: |
-        cabal build -j4 -fenable-cluster-counting \
-        --ld-options=-static \
-        --ghc-options="+RTS -M5G -RTS"
+        cabal build -j4
 
     - name: Produce Artifact
       working-directory: ${{ env.AGDA_SRC }}
