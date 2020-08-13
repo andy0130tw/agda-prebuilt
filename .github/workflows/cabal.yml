@@ -82,14 +82,12 @@ jobs:
     - name: Install dependencies
       working-directory: ${{ env.AGDA_SRC }}
       run: |
-        cabal install --only-dependencies \
-        -fenable-cluster-counting
+        cabal install --only-dependencies
 
     - name: Configure Agda
       working-directory: ${{ env.AGDA_SRC }}
       run: |
-        cabal configure --prefix=/usr/local \
-        -fenable-cluster-counting \
+        cabal configure --prefix=/usr/local
         --enable-tests \
         --disable-library-profiling \
         --disable-executable-dynamic \
