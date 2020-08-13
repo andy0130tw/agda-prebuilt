@@ -21,3 +21,13 @@ You need to extract the `/lib` folder and copy it to the indicated location.
 **Note**: Due to that the prefix is hardcoded in the program, the prefix is set to a system-wide directory `/usr/local`. You may need root permissions to copy the resources into it.
 
 If you can't manage to do it, an environment variable `Agda_datadir` is required whenever you want to invoke `agda`. It should point to the library folder directory ([related issue](https://github.com/agda/agda/issues/4244)). Maybe I should write a simple script for this.
+
+## Issues
+
+- (low priority) To enable cluster counting: https://github.com/4e6/text-icu-static-example
+
+## References
+
+- https://bazaar.launchpad.net/~ubuntu-branches/debian/sid/agda/sid/files/head:/debian
+- https://ro-che.info/articles/2015-10-26-static-linking-ghc
+- https://vaibhavsagar.com/blog/2018/01/03/static-haskell-nix/
