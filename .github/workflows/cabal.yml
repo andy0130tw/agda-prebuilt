@@ -74,14 +74,14 @@ jobs:
       uses: actions/cache@v2
       with:
         path: "~/.cabal"
-        key: ${{ runner.os }}-cabal-${{ matrix.cabal-ver }}-${{ matrix.cabal-ver }}-${{ hashFiles(format('{0}/Agda.cabal', env.AGDA_SRC)) }}-r1
+        key: ${{ runner.os }}-cabal-${{ matrix.cabal-ver }}-${{ matrix.cabal-ver }}-${{ hashFiles('**/plan.json') }}-r1
 
     - name: Cache dists
       uses: actions/cache@v2
       with:
         path: |
           ${{ format('{0}/dist*', env.AGDA_SRC) }}
-        key: ${{ runner.os }}-cabal-${{ matrix.ghc-ver }}-${{ matrix.cabal-ver }}-${{ hashFiles(format('{0}/Agda.cabal', env.AGDA_SRC)) }}-r1
+        key: ${{ runner.os }}-cabal-${{ matrix.ghc-ver }}-${{ matrix.cabal-ver }}-${{ hashFiles('**/plan.json') }}-r1
 
     - name: Configure Agda
       working-directory: ${{ env.AGDA_SRC }}
@@ -103,7 +103,7 @@ jobs:
     - name: Build Agda
       working-directory: ${{ env.AGDA_SRC }}
       run: |
-        cabal build -j4
+        cabal build --prefix=/usr/local -j4
 
     - name: Produce Artifact
       working-directory: ${{ env.AGDA_SRC }}
