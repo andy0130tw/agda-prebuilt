@@ -59,6 +59,8 @@ jobs:
       working-directory: ${{ env.AGDA_SRC }}
       run: |
         sed -i '/^executable agda$/a\  ld-options: -static' Agda.cabal
+        # see https://github.com/agda/agda/issues/4216
+        touch doc/user-manual.pdf
 
     - name: Summarize the environment
       working-directory: ${{ env.AGDA_SRC }}
@@ -96,7 +98,7 @@ jobs:
     - name: Install dependencies
       working-directory: ${{ env.AGDA_SRC }}
       run: |
-        cabal build --only-dependencies
+        cabal build --only-dependencies -j4
 
     - name: Build Agda
       working-directory: ${{ env.AGDA_SRC }}
