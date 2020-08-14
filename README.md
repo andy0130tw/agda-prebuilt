@@ -24,6 +24,7 @@ If you can't manage to do it, an environment variable `Agda_datadir` is required
 
 ## Issues
 
+- **In cabal v2+, prefix is actually ignored**: https://github.com/haskell/cabal/issues/5628#issuecomment-431596953
 - (low priority) To enable cluster counting: https://github.com/4e6/text-icu-static-example
 
 ## References
