@@ -29,6 +29,12 @@ jobs:
         agda-ver:
         - 'v2.6.0.1'
         - 'v2.6.1'
+
+      include:
+          - agda-ver: 'v2.6.0.1'
+            ghc-ver: '8.6.5'
+          - agda-ver: 'v2.6.1'
+            ghc-ver: '8.8.4'
         # - master
 
     env:
@@ -43,7 +49,7 @@ jobs:
 
     - uses: actions/setup-haskell@v1.1.2
       with:
-        ghc-version: '8.8.4'
+        ghc-version: ${{ matrix.ghc-ver }}
         cabal-version: '3.2'
 
     - uses: actions/checkout@v2.3.2
