@@ -6,7 +6,9 @@ Prebuilt, static-linked Agda binary for Linux. Serving as an alternative to [off
 
 ## Usage
 
-Extract the artifact in [action page](https://github.com/andy0130tw/agda-prebuilt/actions). The main executable is `./agda`. Execute it with some arbitary file as the first argument and observe its output.
+Download the artifact either in [one of actions pages](https://github.com/andy0130tw/agda-prebuilt/actions) or in [the release page](https://github.com/andy0130tw/agda-prebuilt/releases).
+
+Extract the artifact archive. The main executable is `./agda`. Execute it with some arbitary file as the first argument and observe its output.
 
 ```bash
 $ ./agda /dev/null

@@ -39,14 +39,12 @@ jobs:
     - name: Setup environment
       run: |
         sudo apt update
+        sudo apt install alex happy
 
     - uses: actions/setup-haskell@v1.1.2
       with:
         ghc-version: '8.8.4'
         cabal-version: '3.2'
-
-    - name: Update cabal
-      run: cabal v1-update
 
     - uses: actions/checkout@v2.3.2
       with:
@@ -64,7 +62,7 @@ jobs:
       run: |
         export AGDA_VERSION=$(cabal info . | head -n 1 | cut -d " " -f 2 | cut -d "-" -f 2)
         _GHC_STR=$(ghc --version)
-        _CABAL_STR=$(cabal --version)
+        _CABAL_STR=$(cabal --version | head -n 1)
         _CACHE_KEY=$(echo "$_GHC_STR-$_CABAL_STR" | sed "s/[^a-z0-9]/_/gi")
         echo "::set-env name=AGDA_CACHE_KEY::$_CACHE_KEY"
         echo "*** GHC version ***"     && ghc --version
@@ -131,9 +129,3 @@ jobs:
       with:
         name: agda-prebuilt-${{ matrix.agda-ver }}
         path: ${{ env.AGDA_DIST }}
-
-    - name: "For inspecting .cabal"
-      uses: actions/upload-artifact@v2
-      with:
-        name: cabal-dir
-        path: "~/.cabal"
