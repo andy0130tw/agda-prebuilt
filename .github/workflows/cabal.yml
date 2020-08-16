@@ -30,7 +30,7 @@ jobs:
         - 'v2.6.0.1'
         - 'v2.6.1'
 
-      include:
+        include:
           - agda-ver: 'v2.6.0.1'
             ghc-ver: '8.6.5'
           - agda-ver: 'v2.6.1'
