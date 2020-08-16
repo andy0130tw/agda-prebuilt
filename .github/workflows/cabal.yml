@@ -61,7 +61,7 @@ jobs:
     - name: Edit the cabal file
       working-directory: ${{ env.AGDA_SRC }}
       run: |
-        sed -i '/^executable agda$/a\  ld-options: -static' Agda.cabal
+        sed -i '/^executable agda$/a\  ld-options: -static -lrt -pthread' Agda.cabal
 
     - name: Summarize the environment
       working-directory: ${{ env.AGDA_SRC }}
