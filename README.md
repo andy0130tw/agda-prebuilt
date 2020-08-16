@@ -2,7 +2,7 @@
 
 ![Linux (cabal)](https://github.com/andy0130tw/agda-prebuilt/workflows/Linux%20(cabal)/badge.svg)
 
-Prebuilt, static-linked Agda binary for Linux.
+Prebuilt, static-linked Agda binary for Linux. Serving as an alternative to [official nightly builds](https://github.com/agda/agda/actions?query=workflow%3A%22Nightly+build%22). (They provide artifacts, too!)
 
 ## Usage
 
@@ -20,7 +20,7 @@ You need to extract the `/lib` folder and copy it to the indicated location.
 
 **Note**: Due to that the prefix is hardcoded in the program, the prefix is set to a system-wide directory `/usr/local`. You may need root permissions to copy the resources into it.
 
-If you can't manage to do it, an environment variable `Agda_datadir` is required whenever you want to invoke `agda`. It should point to the library folder directory ([related issue](https://github.com/agda/agda/issues/4244)). Maybe I should write a simple script for this.
+If you can't manage to do it, an environment variable `Agda_datadir` is required whenever you want to invoke `agda`. It should point to the library folder directly ([related issue](https://github.com/agda/agda/issues/4244)). Maybe I should write a simple script for this.
 
 ## Issues
 

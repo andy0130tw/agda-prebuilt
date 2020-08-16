@@ -39,10 +39,14 @@ jobs:
     - name: Setup environment
       run: |
         sudo apt update
-        sudo apt install ghc cabal-install alex happy libicu-dev
+
+    - uses: actions/setup-haskell@v1.1.2
+      with:
+        ghc-version: '8.8.4'
+        cabal-version: '3.2'
 
     - name: Update cabal
-      run: cabal update
+      run: cabal v1-update
 
     - uses: actions/checkout@v2.3.2
       with:
@@ -84,12 +88,12 @@ jobs:
     - name: Install dependencies
       working-directory: ${{ env.AGDA_SRC }}
       run: |
-        cabal install --only-dependencies
+        cabal v1-install --only-dependencies
 
     - name: Configure Agda
       working-directory: ${{ env.AGDA_SRC }}
       run: |
-        cabal configure --prefix=/usr/local \
+        cabal v1-configure --prefix=/usr/local \
         --enable-tests \
         --disable-library-profiling \
         --disable-executable-dynamic \
@@ -101,9 +105,9 @@ jobs:
     - name: Build Agda
       working-directory: ${{ env.AGDA_SRC }}
       run: |
-        cabal build -j4
+        cabal v1-build -j4
 
-    - name: Produce Artifact
+    - name: Pack artifacts
       working-directory: ${{ env.AGDA_SRC }}
       run: |
         DIST="$GITHUB_WORKSPACE/$AGDA_DIST"
