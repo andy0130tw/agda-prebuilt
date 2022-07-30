@@ -18,8 +18,6 @@ jobs:
       && !contains(github.event.head_commit.message, '[github skip]')
       && !contains(github.event.head_commit.message, '[skip github]')
 
-    runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
         os:
@@ -32,10 +30,12 @@ jobs:
         - '9.2.2'
         - '8.10.7'
         include:
-        - agda-ver: 'v2.6.1'
+        - os: ubuntu-20.04
+          agda-ver: 'v2.6.1'
           ghc-ver: '8.8.4'
-
       fail-fast: false
+
+    runs-on: ${{ matrix.os }}
 
     env:
       AGDA_SRC: './agda-src'
