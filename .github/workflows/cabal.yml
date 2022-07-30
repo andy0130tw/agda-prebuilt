@@ -72,7 +72,7 @@ jobs:
         _GHC_STR=$(ghc --version)
         _CABAL_STR=$(cabal --version | head -n 1)
         _CACHE_KEY=$(echo "$_GHC_STR-$_CABAL_STR" | sed "s/[^a-z0-9]/_/gi")
-        echo "::set-env name=AGDA_CACHE_KEY::$_CACHE_KEY"
+        echo "AGDA_CACHE_KEY=$_CACHE_KEY" >> $GITHUB_ENV
         echo "*** GHC version ***"     && ghc --version
         echo "*** cabal version ***"   && cabal --version
         echo "*** Agda version ***"    && echo $AGDA_VERSION
